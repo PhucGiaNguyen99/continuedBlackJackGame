@@ -1,10 +1,15 @@
-import jdk.swing.interop.SwingInterOpUtils;
+import main.java.Card;
+import main.java.Dealer;
+import main.java.DeckOfCards;
+import main.java.Player;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BJGameDriver {
-    private ArrayList<Player> playerArrayList;
+    private ArrayList<Player> playersList;
+
+    private ArrayList<Player> nonBlackJackPlayersList;
 
     // Index to control the turn of players
     // Initialized to 1
@@ -27,6 +32,7 @@ public class BJGameDriver {
         // Initialize the turn index to 0
         turnIndex = 0;
         numOfPlayers = players.size();
+        nonBlackJackPlayersList = new ArrayList<>();
 
         // Initialize the game status to unfinished
         isGameFinished = false;
@@ -44,15 +50,19 @@ public class BJGameDriver {
             // Deal starting cards for the players
             dealStartingCards();
 
+            // After splitting the card, check whether the dealer has Black Jack, then traverse all the players
+            // If any also has Black Jack, then set the status to even, otherwise to lose.
+            checkBlackJack();
+
+            // Otherwise, traverse the player list to ask whether any wants to draw like regular
             // Traverse the players list and put the player into the process move
-            for (Player player : playerArrayList) {
+            for (Player player : this.playersList) {
                 String playerMove = getMove(player);
                 processMove(player.getPhoneNumber(), playerMove);
             }
             dealerPlays();
             showFinalPoints();
             initWinners();
-
 
         }
     }
@@ -87,7 +97,7 @@ public class BJGameDriver {
 
     // Initialize the players list and winners list
     private void initPlayers(ArrayList<Player> playerArrayList) {
-        this.playerArrayList = playerArrayList;
+        this.playersList = playerArrayList;
         this.winnersArrayList = new ArrayList<>();
     }
 
@@ -106,7 +116,7 @@ public class BJGameDriver {
     private void showFinalPoints() {
         System.out.println();
         System.out.println("Dealer     " + dealer.calculateTotalDealerHand());
-        for (Player player : playerArrayList) {
+        for (Player player : playersList) {
             System.out.println("Player " + player.getName() + "     " + player.calculateTotalPointPlayerHand());
         }
     }
@@ -119,7 +129,7 @@ public class BJGameDriver {
         if (!isDealerBusted()) {
             int dealerPoint = dealer.calculateTotalDealerHand();
 
-            for (Player player : playerArrayList) {
+            for (Player player : playersList) {
 
                 // In case: Both the dealer and the player are not busted
                 if (!player.isBusted()) {
@@ -147,7 +157,7 @@ public class BJGameDriver {
 
         // Otherwise, all are not busted win
         else {
-            for (Player player : playerArrayList) {
+            for (Player player : playersList) {
 
                 // If both the player and the dealer are busted, set status of the player to even
                 if (!player.isBusted()) {
@@ -169,13 +179,13 @@ public class BJGameDriver {
 
 
     // Remove the first card of the deck
-    private CardNode removeFirstCard() {
+    private Card removeFirstCard() {
         return deckOfCards.removeAtIndex(0);
     }
 
     // Dealing one card for the player
     private void dealCardForPlayer(Player player) {
-        player.dealCardForDealer(removeFirstCard());
+        player.dealCard(removeFirstCard());
     }
 
     // Dealing one card for the dealer
@@ -183,15 +193,27 @@ public class BJGameDriver {
         dealer.dealCardForDealer(removeFirstCard());
     }
 
-    // Check whether the dealer has black jack, if yes, go check all players if any also has BJ, if yes set the player status to even
-    // terminate the game
-    private boolean isDealerBlackJack() {
+    // After splitting the card, check whether the dealer has Black Jack, then traverse all the players
+    // If any also has Black Jack, then set the status to even, otherwise to lose.
+
+    // If the dealer does not have Blackjack, Add non-Blackjack players to the list
+    // and use such list after that
+
+    private void checkBlackJack() {
+
+        // Show that the dealer has Black Jack
         if (dealer.isBlackJack()) {
             System.out.println("Dealer has Black Jack!!!!");
             System.out.println();
+        }
 
-            for (Player player : playerArrayList) {
+        for (Player player : playersList) {
+
+            // If the dealer has Black Jack
+            if (dealer.isBlackJack()) {
+
                 if (player.isBlackJack()) {
+                    System.out.println("Player having phone number: " + player.getPhoneNumber() + " has Black Jack!!");
                     player.setStatusTie();
                 } else {
                     player.setStatusLose();
@@ -201,14 +223,26 @@ public class BJGameDriver {
                 // Terminate the game
                 isGameFinished = true;
             }
-            return true;
+
+            // Otherwise, if the player has Black Jack, then set the status to win, and continue with the remaining players
+            // If the dealer does not have Blackjack, Add non-Blackjack players to the list
+            // and use such list after that
+
+            else {
+                if (player.isBlackJack()) {
+                    System.out.println("Player having phone number: " + player.getPhoneNumber() + " has Black Jack!!");
+                    player.setStatusWin();
+                }
+                nonBlackJackPlayersList.add(player);
+            }
+
         }
-        return false;
     }
+
 
     // To start the game, Deal 2 cards for each player and the dealer
     public void dealStartingCards() {
-        for (Player player : playerArrayList) {
+        for (Player player : playersList) {
 
             System.out.println("Dealing cards for: " + player.getName());
             dealCardForPlayer(player);
@@ -226,32 +260,38 @@ public class BJGameDriver {
         //System.out.println();
     }
 
+    // Check whether dealer has soft 17 or not, if he does, he would continue drawing
+    // Dealer has soft 17 when there is any ace in the hand and the total equals to 17
+    private boolean dealerHasSoft17() {
+        return dealer.containAce() && dealer.calculateTotalDealerHand() == 17;
+    }
+
+
+    // For the case: The dealer does not have Black Jack
 
     // Dealer must hit while his hand is 16 or under
-    // If the total is 17 or more, he must stand
+    // And check whether he has soft 17 or not
     private void dealerPlays() {
-
-        // Firstly, go check whether the dealer has Black Jack or not
-        // Here the isGameFinished will control the game. NO need to do anything
-        if (isDealerBlackJack()) {
-            return;
-        } else {
-            while (dealer.calculateTotalDealerHand() <= 16) {
-                System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
-                System.out.println("Dealer continues to hit.");
-                dealCardForDealer();
-                System.out.println();
-            }
-
-            // If the dealer is lower than 17
-            // For the case the dealer is already 16, he must get one more card
-            if (dealer.calculateTotalDealerHand() < 17) {
-                System.out.println("Dealer continues to hit.");
-                dealCardForDealer();
-            }
+        while (dealer.calculateTotalDealerHand() <= 16) {
             System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
+            System.out.println("Dealer continues to hit.");
+
+            dealCardForDealer();
+
             System.out.println();
         }
+
+        // Check whether dealer has soft 17 or not, if he does, he would continue drawing
+        // Dealer has soft 17 when there is any ace in the hand and the total equals to 17
+        while (dealerHasSoft17()) {
+            System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
+            System.out.println("Dealer continues to hit.");
+            dealCardForDealer();
+            System.out.println();
+        }
+
+        System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
+        System.out.println();
     }
 
 
@@ -261,15 +301,18 @@ public class BJGameDriver {
         // Process move for PLAYER first
 
         // Determine the current player based on the turn index
-        Player currentPlayer = playerArrayList.get(turnIndex);
+        Player currentPlayer = playersList.get(turnIndex);
 
         if (phoneNumber.equals(currentPlayer.getPhoneNumber())) {
 
             // Notify the current player name and total point
             System.out.println("It's " + currentPlayer.getName() + "s turn.");
+
+            // Check if the player has Black Jack, if he does, set his status to wi
             int currentTotalPoint = currentPlayer.calculateTotalPointPlayerHand();
             System.out.println("Current TOTAL POINT: " + currentTotalPoint);
             System.out.println();
+
 
             // If the player wants to stand, then skip to the next player in the list
             if (move.toUpperCase().equals("STAND")) {
@@ -309,19 +352,19 @@ public class BJGameDriver {
             if (turnIndex == numOfPlayers - 1) {
                 dealerPlays();
                 System.out.println("Black Jack game is over!!!!");
-                System.out.println(" WHO IS THE WINNER????");
+                System.out.println(" WHO IS WINNER????");
                 isGameFinished = true;
             }
+        } else {
+            // If the phone number is not matched to the current player's one
+            System.out.println(" It's not turn of the player having phone number " + phoneNumber + "!!!!");
         }
-
-        // If the phone number is not matched to the current player's one
-        System.out.println(" It's not turn of the player having phone number " + phoneNumber + "!!!!");
     }
 
     // Present name and total point of the player
     private void showPoint() {
         System.out.println("Player\t\t\t\t\t" + "Points");
-        for (Player player : playerArrayList) {
+        for (Player player : playersList) {
             System.out.println(player.getName() + "\t\t\t\t\t" + player.calculateTotalPointPlayerHand());
         }
     }
@@ -330,11 +373,16 @@ public class BJGameDriver {
     public static void main(String[] args) {
 
         // Create list of players
-        Player player1 = new Player("Phuc", "123");
-        Player player2 = new Player("Anh", "456");
+        Player player1 = new Player("A", "12");
+        Player player2 = new Player("B", "34");
+        Player player3 = new Player("C", "56");
+        Player player4 = new Player("D", "78");
+
         ArrayList<Player> players = new ArrayList<>();
         players.add(player1);
         players.add(player2);
+        players.add(player3);
+        players.add(player4);
 
         // Create an object of the class Driver
         BJGameDriver bjGameDriver = new BJGameDriver();
