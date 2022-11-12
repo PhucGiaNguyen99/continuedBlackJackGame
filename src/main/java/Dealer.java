@@ -2,17 +2,17 @@ package main.java;
 
 public class Dealer {
     // Create a card hand for the dealer
-    CardHand dealerHand;
+    Hand dealerHand;
 
     public Dealer() {
-        this.dealerHand = new CardHand();
+        this.dealerHand = new Hand();
     }
 
-    public CardHand getDealerHand() {
+    public Hand getDealerHand() {
         return dealerHand;
     }
 
-    public void setDealerHand(CardHand dealerHand) {
+    public void setDealerHand(Hand dealerHand) {
         this.dealerHand = dealerHand;
     }
 
@@ -30,7 +30,7 @@ public class Dealer {
     }
 
     public void printHand() {
-        dealerHand.presentCardHand();
+        dealerHand.printHand();
     }
 
     // Add one card to the player hand

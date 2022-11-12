@@ -5,7 +5,7 @@ public class Player {
     private String phoneNumber;
 
     // card hand to hold the player's cards
-    private CardHand playerHand;
+    private Hand playerHand;
 
     private int status;
 
@@ -16,7 +16,7 @@ public class Player {
     public Player(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.playerHand = new CardHand();
+        this.playerHand = new Hand();
         this.status = STATUS_UNDETERMINED;
     }
 
@@ -72,7 +72,7 @@ public class Player {
         this.phoneNumber = phoneNumber;
     }
 
-    public CardHand getPlayerHand() {
+    public Hand getPlayerHand() {
         return playerHand;
     }
 
@@ -88,7 +88,7 @@ public class Player {
 
     // method to present the player hand
     public void printHand() {
-        playerHand.presentCardHand();
+        playerHand.printHand();
     }
 
     // method to present the name and phone number of the player

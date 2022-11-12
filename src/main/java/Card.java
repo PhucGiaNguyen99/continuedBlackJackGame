@@ -99,13 +99,8 @@ public class Card {
 
 
     // compare the value of two cards. Return -1 if the object card is smaller than the compared card, return 0 if both cards are equal, otherwise return 1
-    public int compareCards(Card comparedCard) {
-        if (this.getCardValue() < comparedCard.getCardValue()) {
-            return -1;
-        } else if (this.getCardValue() == comparedCard.getCardValue()) {
-            return 0;
-        }
-        return -1;
+    public int compareCards(Card otherCard) {
+        return this.getCardValue() < otherCard.getCardValue() ? -1 : this.getCardValue() == otherCard.getCardValue() ? 0 : 1;
     }
 
 
