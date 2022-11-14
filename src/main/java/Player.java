@@ -3,22 +3,23 @@ package main.java;
 public class Player {
     private String name;
     private String phoneNumber;
-
-    // card hand to hold the player's cards
     private Hand playerHand;
 
+    private boolean isDealer;
     private int status;
-
-    // constants for player's status: -1 if the player loses, 1 if he wins, 0 if he ties or 13 for the start of the game
-    public static final int STATUS_LOSE = -1, STATUS_WIN = 1, STATUS_TIE = 0, STATUS_UNDETERMINED = 13;
+    public static final int STATUS_LOSE = -1, STATUS_WIN = 1, STATUS_TIE = 0, STATUS_UNDETERMINED = 99;
 
     // initialize the player with name, phone number, an object of Card Hand and undetermined status
-    public Player(String name, String phoneNumber) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
+    // Otherwise, if it's dealer, the input will be empty for name and phone number. We just need to initialize hand and set status to undetermined
+    public Player(String name, String phoneNumber, boolean isDealer) {
+        if (isDealer == false) {
+            this.name = name;
+            this.phoneNumber = phoneNumber;
+        }
         this.playerHand = new Hand();
         this.status = STATUS_UNDETERMINED;
     }
+
 
     public String getStatus() {
         switch (status) {
@@ -38,7 +39,7 @@ public class Player {
     }
 
 
-    // setters and getters
+    // change status of the player
     public void setStatus(int status) {
         this.status = status;
     }
@@ -82,18 +83,18 @@ public class Player {
 
 
     // method to calculate the total point of the player's hand
-    public int calculateTotalPointPlayerHand() {
+    public int getTotalPointPlayer() {
         return playerHand.calculateTotalPoint();
     }
 
-    // method to present the player hand
+    // present the player's hand
     public void printHand() {
         playerHand.printHand();
     }
 
-    // method to present the name and phone number of the player
+    // return String for the player's info: name, phone number and status
     public String toString() {
-        return "Name: " + name + ".  " + "Phone number: " + phoneNumber;
+        return "Name: " + getName() + ".  " + "Phone number: " + getPhoneNumber() + "\nStatus: " + getStatus();
     }
 
     // add one card to the player hand
@@ -102,21 +103,14 @@ public class Player {
     }
 
     // check if the player busted or not
-    public boolean isBusted() {
+    public boolean isPlayerBusted() {
         return playerHand.isBusted();
     }
 
     // check if the player has Blackjack or not
-    public boolean isBlackJack() {
+    public boolean isPlayerBlackJack() {
         return playerHand.isBlackJack();
     }
 
-    public static void main(String[] args) {
-        Player player1 = new Player("Phuc", "0062");
-        player1.dealCard(new Card("2", "K", null));
-        player1.dealCard(new Card("5", "K", null));
 
-        player1.printHand();
-        System.out.println(player1.calculateTotalPointPlayerHand());
-    }
 }

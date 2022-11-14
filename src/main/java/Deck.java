@@ -2,7 +2,7 @@ package main.java;
 
 import java.security.SecureRandom;
 
-public class DeckOfCards {
+public class Deck {
     int numOfCards = 0;
     Card deck;
     public static final String[] CARD_VALUES = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13"};
@@ -10,7 +10,7 @@ public class DeckOfCards {
     Card head = null;
 
     // Request whether the player want to create a blank or standard deck
-    public DeckOfCards(boolean emptyDeck) {
+    public Deck(boolean emptyDeck) {
         if (emptyDeck) {
             return;
         } else
@@ -116,13 +116,13 @@ public class DeckOfCards {
     }
 
     public static void main(String[] args) {
-        DeckOfCards deckOfCards = new DeckOfCards(false);
+        Deck deck = new Deck(false);
 
-        deckOfCards.shuffleDeck();
-        deckOfCards.printDeck();
+        deck.shuffleDeck();
+        deck.printDeck();
 
 
-        System.out.println(deckOfCards.numOfCards);
+        System.out.println(deck.numOfCards);
 
     }
 }

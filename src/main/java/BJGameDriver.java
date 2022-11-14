@@ -1,35 +1,33 @@
-import main.java.Card;
-import main.java.Dealer;
-import main.java.DeckOfCards;
-import main.java.Player;
+package main.java;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BJGameDriver {
-    private ArrayList<Player> playersList;
 
-    private ArrayList<Player> nonBlackJackPlayersList;
-
-    // Index to control the turn of players
-    // Initialized to 1
-    private int turnIndex;
-
-    // Initialized to size of the player list
     private int numOfPlayers;
-    private DeckOfCards deckOfCards;
+    // the first element of playersList is for Dealer, so adding players from index 1
+    private ArrayList<Player> playersList;
+    private ArrayList<Player> nonBlackJackPlayersList;  // DELETE. Use player status to keep track of whether player is Black Jack or busted
 
-    // Create an object for the dealer
-    private Dealer dealer = new Dealer();
+    // index to control the turn of players and initialize turnIndex to 1
+    private int turnIndex;
+    private Deck deck;
+
+    // create an object for dealer with empty name and phone number
+    private Player dealer = new Player("", "", true);
+
+    // a boolean to keep track whether the game is finished or ongoing
     private boolean isGameFinished;
 
-    private ArrayList<Player> winnersArrayList;
+    private ArrayList<Player> winnersArrayList; // DELETE. Use player status to keep track of whether player is Black Jack or busted
+
 
 
     // Control the whole game
     public void initGame(ArrayList<Player> players, int deckCount) {
 
-        // Initialize the turn index to 0
+        // Initialize the turn index to 1 as dealer takes the index 0
         turnIndex = 0;
         numOfPlayers = players.size();
         nonBlackJackPlayersList = new ArrayList<>();
@@ -71,12 +69,12 @@ public class BJGameDriver {
     // Request the input of the player for the move option
     private String getMove(Player player) {
         System.out.println("It's " + player.getName() + "'s turn.");
-        System.out.println("Current total point: " + player.calculateTotalPointPlayerHand());
+        System.out.println("Current total point: " + player.getTotalPointPlayer());
         System.out.println("Enter move: ");
         Scanner scanner = new Scanner(System.in);
         String move = scanner.next().toUpperCase();
         while (!move.equals("HIT") && !move.equals("STAND")) {
-            System.out.println("Current total point: " + player.calculateTotalPointPlayerHand());
+            System.out.println("Current total point: " + player.getTotalPointPlayer());
             System.out.println("Enter valid move(Hit/Stand): ");
             move = scanner.next().toUpperCase();
         }
@@ -86,13 +84,13 @@ public class BJGameDriver {
 
     // Shuffle the deck of cards
     private void shuffleDeck() {
-        deckOfCards.shuffleDeck();
+        deck.shuffleDeck();
     }
 
 
     // For the case the deck is not empty initially
     private void initDeck() {
-        deckOfCards = new DeckOfCards(false);
+        deck = new Deck(false);
     }
 
     // Initialize the players list and winners list
@@ -117,7 +115,7 @@ public class BJGameDriver {
         System.out.println();
         System.out.println("Dealer     " + dealer.calculateTotalDealerHand());
         for (Player player : playersList) {
-            System.out.println("Player " + player.getName() + "     " + player.calculateTotalPointPlayerHand());
+            System.out.println("Player " + player.getName() + "     " + player.getTotalPointPlayer());
         }
     }
 
@@ -132,8 +130,8 @@ public class BJGameDriver {
             for (Player player : playersList) {
 
                 // In case: Both the dealer and the player are not busted
-                if (!player.isBusted()) {
-                    int playerPoint = player.calculateTotalPointPlayerHand();
+                if (!player.isPlayerBusted()) {
+                    int playerPoint = player.getTotalPointPlayer();
 
                     if (playerPoint > dealerPoint) {
                         player.setStatusWin();
@@ -160,7 +158,7 @@ public class BJGameDriver {
             for (Player player : playersList) {
 
                 // If both the player and the dealer are busted, set status of the player to even
-                if (!player.isBusted()) {
+                if (!player.isPlayerBusted()) {
                     player.setStatus(1);
                 }
 
@@ -180,7 +178,7 @@ public class BJGameDriver {
 
     // Remove the first card of the deck
     private Card removeFirstCard() {
-        return deckOfCards.removeAtIndex(0);
+        return deck.removeAtIndex(0);
     }
 
     // Dealing one card for the player
@@ -212,7 +210,7 @@ public class BJGameDriver {
             // If the dealer has Black Jack
             if (dealer.isBlackJack()) {
 
-                if (player.isBlackJack()) {
+                if (player.isPlayerBlackJack()) {
                     System.out.println("Player having phone number: " + player.getPhoneNumber() + " has Black Jack!!");
                     player.setStatusTie();
                 } else {
@@ -229,7 +227,7 @@ public class BJGameDriver {
             // and use such list after that
 
             else {
-                if (player.isBlackJack()) {
+                if (player.isPlayerBlackJack()) {
                     System.out.println("Player having phone number: " + player.getPhoneNumber() + " has Black Jack!!");
                     player.setStatusWin();
                 }
@@ -250,7 +248,7 @@ public class BJGameDriver {
 
             System.out.println(player.getName() + "'s hand: ");
             player.printHand();
-            System.out.println("TOTAL POINT: " + player.calculateTotalPointPlayerHand());
+            System.out.println("TOTAL POINT: " + player.getTotalPointPlayer());
             System.out.println();
         }
 
@@ -309,7 +307,7 @@ public class BJGameDriver {
             System.out.println("It's " + currentPlayer.getName() + "s turn.");
 
             // Check if the player has Black Jack, if he does, set his status to wi
-            int currentTotalPoint = currentPlayer.calculateTotalPointPlayerHand();
+            int currentTotalPoint = currentPlayer.getTotalPointPlayer();
             System.out.println("Current TOTAL POINT: " + currentTotalPoint);
             System.out.println();
 
@@ -323,7 +321,7 @@ public class BJGameDriver {
             while (move.toUpperCase().equals("HIT")) {
 
                 // Check if the player is busted or not, if the player is busted, skip to the next player
-                if (currentPlayer.isBusted()) {
+                if (currentPlayer.isPlayerBusted()) {
                     System.out.println("You've been busted already!");
                     turnIndex++;
                     return;
@@ -333,10 +331,10 @@ public class BJGameDriver {
                 dealCardForPlayer(currentPlayer);
                 System.out.println(currentPlayer.getName() + "'s card hand: ");
                 currentPlayer.printHand();
-                System.out.println("TOTAL POINT after the move: " + currentPlayer.calculateTotalPointPlayerHand());
+                System.out.println("TOTAL POINT after the move: " + currentPlayer.getTotalPointPlayer());
                 System.out.println();
 
-                System.out.println("Current total point: " + currentPlayer.calculateTotalPointPlayerHand());
+                System.out.println("Current total point: " + currentPlayer.getTotalPointPlayer());
                 System.out.println("STAND or HIT ?");
                 Scanner scanner = new Scanner(System.in);
                 move = scanner.next();
@@ -365,31 +363,10 @@ public class BJGameDriver {
     private void showPoint() {
         System.out.println("Player\t\t\t\t\t" + "Points");
         for (Player player : playersList) {
-            System.out.println(player.getName() + "\t\t\t\t\t" + player.calculateTotalPointPlayerHand());
+            System.out.println(player.getName() + "\t\t\t\t\t" + player.getTotalPointPlayer());
         }
     }
 
-
-    public static void main(String[] args) {
-
-        // Create list of players
-        Player player1 = new Player("A", "12");
-        Player player2 = new Player("B", "34");
-        Player player3 = new Player("C", "56");
-        Player player4 = new Player("D", "78");
-
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(player1);
-        players.add(player2);
-        players.add(player3);
-        players.add(player4);
-
-        // Create an object of the class Driver
-        BJGameDriver bjGameDriver = new BJGameDriver();
-        bjGameDriver.initGame(players, 1);
-
-
-    }
 
 }
 
