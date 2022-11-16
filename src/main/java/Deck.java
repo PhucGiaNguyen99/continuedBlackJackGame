@@ -22,7 +22,6 @@ public class Deck {
             for (int indexSuit = 0; indexSuit < CARD_SUITS.length; indexSuit++) {
                 Card card = new Card(CARD_VALUES[indexCard], CARD_SUITS[indexSuit], null);
                 addLast(card);
-
             }
         }
     }
@@ -61,18 +60,16 @@ public class Deck {
         }
         Card cursor = head;
         if (position == 0) {
-            Card temp = head;
             head = head.getLink();
-            temp.setLink(null);
+            cursor.setLink(null);
             numOfCards--;
-            return temp;
+            return cursor;
         }
 
         for (int i = 0; cursor != null && i < position - 1; i++) {
             cursor = cursor.getLink();
         }
         if (cursor == null || cursor.getLink() == null) {
-
             return null;
         }
         Card nextOfNext = cursor.getLink().getLink();
@@ -81,6 +78,11 @@ public class Deck {
         cursor.setLink(nextOfNext);
         numOfCards--;
         return removedNode;
+    }
+
+    // deal one card for the given player
+    public void dealCard(Player player) {
+        Card dealCard = removeAtIndex(0);
     }
 
 
@@ -96,18 +98,10 @@ public class Deck {
     }
 
     public void printDeck() {
-        /*CardNode currentNode = head;
-        while (currentNode != null) {
-            System.out.println(currentNode.getCard());
-            // System.out.println();
-
-            currentNode = currentNode.getLink();
-        }*/
         Card cursor = head;
         if (head == null) {
             return;
         }
-
         while (cursor != null) {
 
             System.out.println(cursor.toString());
@@ -115,14 +109,5 @@ public class Deck {
         }
     }
 
-    public static void main(String[] args) {
-        Deck deck = new Deck(false);
 
-        deck.shuffleDeck();
-        deck.printDeck();
-
-
-        System.out.println(deck.numOfCards);
-
-    }
 }

@@ -342,7 +342,7 @@ class HandTest {
         hand2.addCardToHand(new Card("1", "S", null));
         hand2.addCardToHand(new Card("11", "S", null));
 
-        if (hand1.isBlackJack() && hand2.isBlackJack()) {
+        if (hand1.isBlackjack() && hand2.isBlackjack()) {
             assertEquals(0, hand1.compareTo(hand2));
         }
     }

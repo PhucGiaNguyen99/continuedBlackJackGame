@@ -1,8 +1,6 @@
 package main.java;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class Hand {
     public static final int BLACKJACK_VALUE = 10000;
@@ -57,7 +55,7 @@ public class Hand {
     }
 
     // check if hand has BlackJack, that there are 2 cards in hand and the total point is 21
-    public boolean isBlackJack() {
+    public boolean isBlackjack() {
         return (cardHand.size() == 2 && this.calculateTotalPoint() == 21);
     }
 
@@ -65,7 +63,7 @@ public class Hand {
     public int getStatus() {
         if (isBusted()) {
             return BUSTED_VALUE;
-        } else if (isBlackJack()) {
+        } else if (isBlackjack()) {
             return BLACKJACK_VALUE;
         } else {
             return this.calculateTotalPoint();
@@ -106,34 +104,5 @@ public class Hand {
         return false;
     }
 
-    public static void main(String[] args) {
-        /*CardHand cardHand1 = new CardHand();
-        cardHand1.addCardToHand(new CardNode("3", "H", null));
-        cardHand1.addCardToHand(new CardNode("1", "C", null));
-        cardHand1.addCardToHand(new CardNode("1", "S", null));
-        cardHand1.addCardToHand(new CardNode("9", "S", null));
-        cardHand1.addCardToHand(new CardNode("9", "S", null));
 
-        CardHand cardHand2 = new CardHand();
-        cardHand2.addCardToHand(new CardNode("1", "H", null));
-        cardHand2.addCardToHand(new CardNode("10", "C", null));
-        cardHand2.addCardToHand(new CardNode("9", "S", null));
-        System.out.println(cardHand1.containAce());
-        System.out.println(cardHand1.calculateTotalPoint());*/
-        List<Integer> list1 = new ArrayList<>();
-        /*list1.add(1);
-        list1.add(2);
-        list1.add(3);*/
-
-        ArrayList<Integer> list2 = new ArrayList<>();
-        list1.add(4);
-        list1.add(5);
-        list1.add(6);
-
-        Collections.copy(list1, list2);
-        for (Integer item : list1) {
-            System.out.println(item);
-        }
-
-    }
 }

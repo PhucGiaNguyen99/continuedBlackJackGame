@@ -97,10 +97,10 @@ public class Player {
         return "Name: " + getName() + ".  " + "Phone number: " + getPhoneNumber() + "\nStatus: " + getStatus();
     }
 
-    // add one card to the player hand
-    public void dealCard(Card cardNode) {
-        this.getPlayerHand().addCardToHand(cardNode);
-    }
+    // add one card to the player hand. DELETED<- deal card will do in Deck class
+    //public void dealCard(Card cardNode) {
+    //  this.getPlayerHand().addCardToHand(cardNode);
+    //}
 
     // check if the player busted or not
     public boolean isPlayerBusted() {
@@ -108,8 +108,8 @@ public class Player {
     }
 
     // check if the player has Blackjack or not
-    public boolean isPlayerBlackJack() {
-        return playerHand.isBlackJack();
+    public boolean isPlayerBlackjack() {
+        return playerHand.isBlackjack();
     }
 
 
