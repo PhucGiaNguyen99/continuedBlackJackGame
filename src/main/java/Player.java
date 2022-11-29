@@ -104,6 +104,7 @@ public class Player {
 
     // check if the player busted or not
     public boolean isPlayerBusted() {
+
         return playerHand.isBusted();
     }
 

@@ -91,6 +91,7 @@ public class Hand {
         //if ((this.getStatus() == -1 && otherHand.getStatus() == -1) || (this.getStatus() == 10000 && otherHand.getStatus() == 10000)) {
         //  return 0;
         //}
+        c
         return this.getStatus() > otherHand.getStatus() ? 1 : this.getStatus() == otherHand.getStatus() ? 0 : -1;
     }
 

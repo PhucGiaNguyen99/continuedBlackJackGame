@@ -6,9 +6,9 @@ import java.util.Scanner;
 public class BJGameDriver {
 
     private int numOfPlayers;
+
     // the first element of playersList is for Dealer, so adding players from index 1
     private ArrayList<Player> playersList;
-    private ArrayList<Player> nonBlackJackPlayersList;  // DELETE. Use player status to keep track of whether player is Black Jack or busted
 
     // index to control the turn of players and initialize turnIndex to 1
     private int turnIndex;
@@ -29,7 +29,7 @@ public class BJGameDriver {
         // Initialize the turn index to 1 as dealer takes the index 0
         turnIndex = 0;
         numOfPlayers = players.size();
-        nonBlackJackPlayersList = new ArrayList<>();
+        //nonBlackJackPlayersList = new ArrayList<>();
 
         // Initialize the game status to unfinished
         isGameFinished = false;
@@ -57,9 +57,9 @@ public class BJGameDriver {
                 String playerMove = getMove(player);
                 processMove(player.getPhoneNumber(), playerMove);
             }
-            dealerPlays();
+            //fdealerPlays();
             showFinalPoints();
-            initWinners();
+            //initWinners();
 
         }
     }
@@ -112,15 +112,11 @@ public class BJGameDriver {
 
     // Show final points of all players and the dealer
     private void showFinalPoints() {
-        System.out.println();
-        System.out.println("Dealer     " + dealer.calculateTotalDealerHand());
-        for (Player player : playersList) {
-            System.out.println("Player " + player.getName() + "     " + player.getTotalPointPlayer());
-        }
+
     }
 
 
-    // Determine the winners and return an arrayList of the winners for android dev use later
+    /* Determine the winners and return an arrayList of the winners for android dev use later
     public void initWinners() {
 
         // If the dealer is not busted, the winners are players having total point higher than the dealer and not busted
@@ -173,7 +169,7 @@ public class BJGameDriver {
         }
         // Terminate the game
         isGameFinished = true;
-    }
+    }*/
 
 
     // Remove the first card of the deck
@@ -185,6 +181,7 @@ public class BJGameDriver {
     private void dealCardForPlayer(Player player) {
         deck.dealCard(player);
     }
+
     private void checkBlackjack() {
 
         // Show that the dealer has Black Jack
@@ -219,7 +216,7 @@ public class BJGameDriver {
                     System.out.println("Player having phone number: " + player.getPhoneNumber() + " has Black Jack!!");
                     player.setStatusWin();
                 }
-                nonBlackJackPlayersList.add(player);
+                //nonBlackJackPlayersList.add(player);
             }
 
         }
@@ -258,7 +255,7 @@ public class BJGameDriver {
 
     // Dealer must hit while his hand is 16 or under
     // And check whether he has soft 17 or not
-    private void dealerPlays() {
+    /*private void dealerPlays() {
         while (dealer.calculateTotalDealerHand() <= 16) {
             System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
             System.out.println("Dealer continues to hit.");
@@ -279,7 +276,7 @@ public class BJGameDriver {
 
         System.out.println("Dealer's TOTAL POINT: " + dealer.calculateTotalDealerHand());
         System.out.println();
-    }
+    }*/
 
 
     // Manage the move of the players
@@ -337,7 +334,7 @@ public class BJGameDriver {
 
             // Process move for the dealer after dealing with all the players
             if (turnIndex == numOfPlayers - 1) {
-                dealerPlays();
+                //dealerPlays();
                 System.out.println("Black Jack game is over!!!!");
                 System.out.println(" WHO IS WINNER????");
                 isGameFinished = true;
